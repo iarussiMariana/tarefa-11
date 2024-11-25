@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,10 +63,6 @@
       transform: translateX(10px);
     }
 
-    li span {
-      font-weight: bold;
-    }
-
     button {
       display: block;
       width: 100%;
@@ -92,6 +88,7 @@
       font-size: 14px;
       color: #666;
     }
+
   </style>
 
 </head>
@@ -103,20 +100,78 @@
   <main>
 
     <h1>Lista de Animais</h1>
-
+    
     <ul id="lista-animais"></ul>
 
     <button id="botao-adicionar-animal">Cadastrar Animal</button>
 
   </main>
-  
+
   <footer>
-    Desenvolvido com ❤️ | Mariana Iarussi (RA: 248372)
+    Desenvolvido com ❤️ | Projeto Demo
   </footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Faker/5.5.3/faker.min.js"></script>
+  <script>
 
-  <script src="script.js"></script>
+    const URL_API = "https://6734abe5a042ab85d11b2a63.mockapi.io/animais/animais_teste";
 
+    async function buscarAnimais() {
+
+      try {
+
+        const resposta = await fetch(URL_API);
+        const animais = await resposta.json();
+        const listaAnimais = document.getElementById("lista-animais");
+
+        listaAnimais.innerHTML = ""; 
+
+        animais.forEach((animal) => {
+          const itemLista = document.createElement("li");
+          itemLista.textContent = `${animal.id} - ${animal.nome} (${animal.idade} anos) – ${animal.raca}`;
+          listaAnimais.appendChild(itemLista);
+        });
+
+      } catch (erro) {
+
+        console.error("Erro ao buscar animais:", erro);
+      }
+    }
+
+    async function adicionarAnimal() {
+
+      const novoAnimal = {
+        nome: "Berry",
+        idade: 8,
+        raca: "Cavalier King Charles Spaniel",
+      };
+
+      try {
+
+        const resposta = await fetch(URL_API, {
+
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(novoAnimal),
+          
+        });
+
+        if (resposta.ok) {
+          buscarAnimais(); 
+        } else {
+          throw new Error("Erro ao cadastrar animal.");
+        }
+      } catch (erro) {
+        console.error(erro);
+      }
+    }
+
+    document.getElementById("botao-adicionar-animal").addEventListener("click", adicionarAnimal);
+
+    buscarAnimais();
+
+  </script>
+  
 </body>
 </html>
